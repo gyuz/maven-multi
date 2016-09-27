@@ -45,9 +45,9 @@
          <resource>
            <directory>${basedir}/service/src/main/resources</directory>
            <filtering>true</filtering>
-            <includes>
+            <!--includes>
                 <include>version.properties</include>
-            </includes>
+            </includes-->
          </resource>
         </resources>
         <pluginManagement>
