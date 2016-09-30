@@ -45,12 +45,6 @@
     </dependencyManagement>
 
     <build>
-        <resources>
-         <resource>
-           <directory>${basedir}/service/src/main/resources</directory>
-           <filtering>true</filtering>
-         </resource>
-        </resources>
         <pluginManagement>
             <plugins>
 			    <plugin>
