@@ -4,7 +4,7 @@
 
 	<groupId>exercise2</groupId>
   	<artifactId>multi-activity2-parent</artifactId>
-  	<version>1.0.SNAPSHOT</version>
+  	<version>1.0-SNAPSHOT</version>
   
   	<packaging>pom</packaging>
 
@@ -12,6 +12,10 @@
 
   	<properties>	
     	<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding> 
+        <exercise2.model.version>1.0-SNAPSHOT</exercise2.model.version>
+        <exercise2.service.version>1.0-SNAPSHOT</exercise2.service.version>
+        <apache.commons-lang3.version>3.4</apache.commons-lang3.version>
+        <assembly.plugin.version>2.6</assembly.plugin.version>
   	</properties>
 
 	<modules>
@@ -30,12 +34,12 @@
 		    <dependency>
 		        <groupId>exercise2</groupId>
 		        <artifactId>model</artifactId>
-		        <version>${model.version}</version>
+		        <version>${exercise2.model.version}</version>
 		    </dependency>
             <dependency>
 		        <groupId>exercise2</groupId>
 		        <artifactId>service</artifactId>
-		        <version>${service.version}</version>
+		        <version>${exercise2.service.version}</version>
 		    </dependency>
         </dependencies>
     </dependencyManagement>
@@ -45,12 +49,6 @@
          <resource>
            <directory>${basedir}/service/src/main/resources</directory>
            <filtering>true</filtering>
-<<<<<<< HEAD
-=======
-            <!--includes>
-                <include>version.properties</include>
-            </includes-->
->>>>>>> 1b0d46adf00898ef5a166fd5f9eec80f2c9ecb38
          </resource>
         </resources>
         <pluginManagement>
