@@ -1,0 +1,233 @@
+package exercise2.app;
+
+import java.util.*;
+
+public class Exercise2{	
+	private ProcessFile fileOperations;
+	private ProcessMap mapOperations;
+	private Scanner input = new Scanner(System.in);
+
+	Exercise2(String filePath){
+		mapOperations = new ProcessMap();
+		fileOperations = new ProcessFile(filePath, mapOperations);
+		
+	}	
+	
+	public static void main(String[] args){
+		boolean readSuccess = false;		
+		String filePath = "";
+		if (args.length == 0) {
+			filePath = "/home/ecc/Documents/programs/exercise2/testFile1.txt";
+		}		
+		else{
+				filePath = args[0];	
+		}	
+		try{	
+			Exercise2 mainFunctions = new Exercise2(filePath);		
+			readSuccess = mainFunctions.readFile(filePath);				
+				
+			if(readSuccess){
+				Scanner input = new Scanner(System.in);	
+				char choice = 'X';
+				do
+				{
+					System.out.println("Menu"+ 
+						"\nA. Search " +
+						"\nB. Edit " +
+						"\nC. Print " +
+						"\nD. Reset " +
+						"\nE. Add Row " +	
+						"\nF. Sort " +	
+						"\nG. Exit " +	
+						"\nEnter Choice: " );
+
+					choice = input.next().charAt(0);
+					switch(Character.toUpperCase(choice))
+					{
+						case 'A': 
+							mainFunctions.search();
+							break;
+						
+						case 'B': 
+							mainFunctions.edit();
+							break;
+	
+						case 'C': 
+							mainFunctions.print();
+							break;
+						
+						case 'D': 
+							mainFunctions.reset();
+							break;
+						
+						case 'E': 
+							mainFunctions.add();
+							break;
+	
+						case 'F': 
+							mainFunctions.sort();
+							break;
+	
+						case 'G':	
+							 break;
+
+						default: 
+							System.out.println("Invalid Choice!");
+							 break;	
+					}		
+	
+				}while(Character.toUpperCase(choice) != 'G');		
+			}		
+		}	
+		catch(StringIndexOutOfBoundsException e){
+			System.out.println("Please provide full file path. Program will end");
+		}		
+	}
+
+	protected boolean readFile(String filePath){
+		return fileOperations.readFile();
+	}
+
+	protected void search(){
+		String searchString = "";
+		System.out.println("Enter character(s) to search: ");
+		searchString = input.next();
+		System.out.println(mapOperations.search(searchString));	
+	}
+
+	protected void edit(){
+		boolean repeatBlock = false;
+		do{
+				System.out.println("Enter index (00,01,02..):)");
+				String index = input.next();
+				if(index.length()!=2 || !mapOperations.checkIndex(index))
+				{
+					System.out.println("Input Error. Kindly try again");
+					repeatBlock = true;
+				}
+				else
+				{ 	
+					repeatBlock=false;
+					int editChoice = 0;
+					do{										
+						try{
+							System.out.println("Edit:\t (1)Key (2)Value (3)Both");
+							editChoice = input.nextInt();
+							switch(editChoice){
+								case 1: editKey(index);
+									   fileOperations.rewriteData();
+									   break;
+								case 2: editValue(index);
+									   fileOperations.rewriteData();
+									   break;
+								case 3: editKey(index);
+									   editValue(index);
+									   fileOperations.rewriteData();
+									   break;		
+								default:  System.out.println("Enter 1, 2 or 3 only");
+										editChoice=0;
+										break;
+							}
+						}
+						catch(InputMismatchException ime){
+							System.out.println("Enter 1,2 or 3 only");
+							editChoice = 0;
+							input.next();
+			   			}
+					}while(editChoice==0);			
+				}
+		}while(repeatBlock);	
+	}
+
+	protected void editKey(String index){
+		boolean repeatBlock = false;
+		do{	
+			System.out.println("Enter new key:");
+			String newKey = input.next();
+			if(mapOperations.checkKey(newKey)){
+				System.out.println("Key already exists!");
+				repeatBlock = true;		
+			}
+			else{
+				mapOperations.editKey(index, newKey);
+				repeatBlock = false;
+			}	
+		}while(repeatBlock);		
+	}
+
+	protected void editValue(String index){
+		System.out.println("Enter new value:");
+		String newValue = input.next();
+		mapOperations.editValue(index, newValue);		
+	}
+
+
+	protected void print(){
+		LinkedHashMap<String, String> dataMap = mapOperations.getDataMap();
+		String previousKey = "X";
+		for (Map.Entry<String, String> entry : mapOperations.getTableFormatMap().entrySet()){
+			if(previousKey.equals("X") || previousKey.equals(entry.getKey().substring(0,1))){
+				System.out.print("("+entry.getValue()+","+dataMap.get(entry.getValue())+")");
+			}
+			else{
+				System.out.print("\n("+entry.getValue()+","+dataMap.get(entry.getValue())+")");
+			}	
+			previousKey=entry.getKey().substring(0,1);
+		}
+		System.out.print("\n");	
+	}
+
+	protected void reset(){
+		fileOperations.writeOriginalData();
+	}
+
+	protected void add(){
+		boolean repeatBlock = false;
+		String key = "", value = "";
+		int row = fileOperations.getRow();
+
+		do{
+			try{				
+					System.out.println("Input number of key-value pair: ");
+					int newEntriesCount = input.nextInt();
+					if (newEntriesCount>0){
+						repeatBlock = false;
+						row++;
+						for(int i=0;i<newEntriesCount;i++){
+							do{															
+								System.out.println("Enter key for index["+row+""+i+"]: ");
+								key = input.next();
+								boolean keyExists = mapOperations.checkKey(key);
+								if(keyExists){
+									System.out.println("Key already exists. Enter a different key");
+									repeatBlock = true;	
+								}
+								else{
+									repeatBlock = false;
+									System.out.println("Enter value for index["+row+""+i+"]: ");
+									value = input.next();
+									mapOperations.addRow(key, value, row+""+i);
+								}									
+							}while(repeatBlock);
+						}
+						fileOperations.setRow(row);
+						fileOperations.rewriteData();
+					}
+					else{
+						System.out.println("Only positive numbers are allowed");
+						repeatBlock = true;			
+					}
+				}
+				catch(InputMismatchException ime){
+					System.out.println("Only positive numbers are allowed");
+					input.next();
+					repeatBlock = true;
+				}
+		}while(repeatBlock);	
+	}
+
+	protected void sort(){
+		mapOperations.sort();
+		fileOperations.rewriteData();
+	}
+}
