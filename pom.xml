@@ -8,7 +8,7 @@
   
   	<packaging>pom</packaging>
 
-  	<name>Multi-Activity2</name>
+  	<name>Multi-Exercise2</name>
 
   	<properties>	
     	<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding> 
